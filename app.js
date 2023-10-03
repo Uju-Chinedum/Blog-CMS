@@ -7,6 +7,7 @@ const express = require("express");
 const connectDB = require("./db/connect");
 const notFound = require("./middleware/notFound");
 const errorHandler = require("./middleware/errorHandler");
+const authRouter = require("./routes/authRoutes");
 
 // Variable Declarations
 const app = express();
@@ -14,6 +15,9 @@ const port = process.env.PORT || 5000;
 
 // Access Middleware
 app.use(express.json());
+
+// Route Middleware
+app.use("/api/v1/auth", authRouter);
 
 // Error Middleware
 app.use(notFound);
