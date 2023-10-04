@@ -41,32 +41,18 @@ const register = async (req, res) => {
 
 // Verify Email
 const verify = async (req, res) => {
-  const { token, email } = req.query;
-
-  if (!token || !email) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      error: "Missing Token or Email",
-      message: "Verification Failed",
-    });
-  }
-
+  const { verificationToken, email } = req.body;
   const user = await User.findOne({ email });
+
   if (!user) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({
-      error: "Invalid Email",
-      message: "Verification Failed",
-    });
+    throw new Unauthenticated("Invalid User", "Verification Failed");
   }
 
-  if (user.verificationToken !== token) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({
-      error: "Invalid Token",
-      message: "Verification Failed",
-    });
+  if (user.verificationToken !== verificationToken) {
+    throw new Unauthenticated("Invalid Token", "Verification Failed");
   }
 
-  user.isVerified = true;
-  user.verified = Date.now();
+  (user.isVerified = true), (user.verified = Date.now());
   user.verificationToken = "";
 
   await user.save();
