@@ -5,6 +5,7 @@ const crypto = require("crypto");
 // User Imports
 const User = require("../models/User");
 const { BadRequest } = require("../errors");
+const {verificationEmail} = require("../utils")
 
 // Register User with Email and Password
 const register = async (req, res) => {
@@ -26,15 +27,26 @@ const register = async (req, res) => {
   const isFirstAccount = (await User.countDocuments({})) === 0;
   const role = isFirstAccount ? "admin" : "user";
   const verificationToken = crypto.randomBytes(32).toString("hex");
-  req.body.role = role
+  req.body.role = role;
   req.body.verificationToken = verificationToken;
 
-  // Creating user
   const user = await User.create(req.body);
 
-  const forwardedHost = req.get("x-forwarded-host");
-  const forwardedProtocol = req.get("x-forwarded-proto");
-  console.log(forwardedHost, forwardedProtocol)
+  // Setting email verification
+  const forwardedProtocol = req.get("x-forwarded-proto"); // protocol of the url
+  const forwardedHost = req.get("x-forwarded-host");  // host url
+  const origin = `${forwardedProtocol}://${forwardedHost}`
+
+  await verificationEmail({
+    name: user.name,
+    email: user.email,
+    verificationToken: user.verificationToken,
+    origin,
+  });
+
+  res.status(StatusCodes.CREATED).json({
+    msg: "Please check your email and confirm it",
+  });
 };
 
 // Register User with Google
