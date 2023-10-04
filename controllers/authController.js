@@ -26,7 +26,7 @@ const register = async (req, res) => {
   const forwardedProtocol = req.get("x-forwarded-proto"); // protocol of the url
   const forwardedHost = req.get("x-forwarded-host"); // host url
   const origin = `${forwardedProtocol}://${forwardedHost}`;
-  
+
   await verificationEmail({
     name: user.firstName,
     email: user.email,
@@ -41,13 +41,13 @@ const register = async (req, res) => {
 
 // Verify Email
 const verify = async (req, res) => {
-  const { verificationToken, email } = req.query;
+  const { token, email } = req.query;
 
   const user = await User.findOne({ email });
   if (!user) {
     throw new Unauthenticated("Invalid Email", "Verification Failed");
   }
-  if (user.verificationToken !== verificationToken) {
+  if (user.verificationToken !== token) {
     throw new Unauthenticated("Invalid Token", "Verification Failed");
   }
 
