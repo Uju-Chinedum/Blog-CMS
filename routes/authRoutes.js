@@ -16,7 +16,7 @@ const router = express.Router();
 
 // Routes
 router.post("/register", validateUser, register);
-router.post("/verify-email", verify);
+router.get("/verify-email", verify);
 router.get("/google", google);
 router.get("/github", github);
 router.get("/twitter", twitter);

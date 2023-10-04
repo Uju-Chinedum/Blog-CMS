@@ -25,9 +25,8 @@ const register = async (req, res) => {
   // Setting email verification
   const forwardedProtocol = req.get("x-forwarded-proto"); // protocol of the url
   const forwardedHost = req.get("x-forwarded-host"); // host url
-  // const origin = `${forwardedProtocol}://${forwardedHost}`;
-  const origin = "http://localhost:5000";
-
+  const origin = `${forwardedProtocol}://${forwardedHost}`;
+  
   await verificationEmail({
     name: user.firstName,
     email: user.email,
