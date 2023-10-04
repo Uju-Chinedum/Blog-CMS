@@ -4,8 +4,9 @@ const crypto = require("crypto");
 
 // User Imports
 const User = require("../models/User");
+const Token = require("../models/Token")
 const { BadRequest, Unauthenticated } = require("../errors");
-const { verificationEmail } = require("../utils");
+const { verificationEmail, createTokenUser, attachCookiesToResponse } = require("../utils");
 
 // Register User with Email and Password
 const register = async (req, res) => {
@@ -80,7 +81,54 @@ const twitter = async (req, res) => {
 
 // Login User
 const login = async (req, res) => {
-  res.send("login");
+  const {email, password} = req.body
+  if (!email || !password) {
+    throw new BadRequest("Missing Details", "Please provide email and password");
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Unauthenticated("Invalid Credentials", `No user found with email: ${email}`);
+  }
+
+  const isPassword = await user.comparePassword(password)
+  if (!isPassword) {
+    throw new Unauthenticated("Invalid Credentials", "Incorrect password");
+  }
+
+  if (!user.isVerified) {
+    throw new Unauthenticated("Not Verified", "Please verify your email");
+  }
+
+  // Creating JWT Payload, Create Refresh Token
+  // and Check for Existing Token
+  const tokenUser = createTokenUser(user)
+  let refreshToken = ""
+  const existingToken = await Token.findOne({user: user_id})
+
+  if (existingToken) {
+    const {isValid} = existingToken
+    if (!isValid) {
+      throw new Unauthenticated("Invalid Credentials", "Token is not valid")
+    }
+
+    refreshToken = existingToken.refreshToken
+    attachCookiesToResponse({res, user: tokenUser, refreshToken})
+
+    res.status(StatusCodes.OK).json({ user: tokenUser });
+    return;
+  }
+
+  refreshToken = crypto.randomBytes(32).toString("hex");
+  const userAgent = req.headers["user-agent"];
+  const ip = req.ip;
+  const userToken = { refreshToken, ip, userAgent, user: user._id };
+
+  await Token.create(userToken);
+
+  attachCookiesToResponse({ res, user: tokenUser, refreshToken });
+
+  res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
 // Logout User
