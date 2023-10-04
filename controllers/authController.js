@@ -1,6 +1,12 @@
+// Imports
+const User = require("../models/User")
+
 // Register User with Email and Password
 const register = async (req, res) => {
-  res.send("register");
+  const {name, user, email} = req.body
+
+  // Check to see if he email is already in the database
+  const emalAlreadyExists = await User.findOne({email})
 };
 
 // Register User with Google
