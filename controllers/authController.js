@@ -42,7 +42,7 @@ const register = async (req, res) => {
 
 // Verify Email
 const verify = async (req, res) => {
-  const { verificationToken, email } = req.body;
+  const { verificationToken, email } = req.query;
 
   const user = await User.findOne({ email });
   if (!user) {
