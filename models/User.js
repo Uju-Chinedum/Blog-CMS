@@ -24,6 +24,16 @@ const UserSchema = mongoose.Schema(
         message: "Please provide a valid email.",
       },
     },
+    school: {
+      type: String,
+      required: [true, "Please provide your university"],
+      trim: true,
+    },
+    matNo: {
+      type: String,
+      required: [true, "Please provide your matriculation number"],
+      trim: true,
+    },
     phone: {
       type: String,
       unique: true,
@@ -34,6 +44,7 @@ const UserSchema = mongoose.Schema(
     },
     dob: {
       type: Date,
+      required: [true, "Please provide a date of birth"],
     },
     password: {
       type: String,
