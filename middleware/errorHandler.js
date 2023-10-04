@@ -22,9 +22,11 @@ const errorHandler = (err, req, res, next) => {
   // Duplicate Error
   if (err.code && err.code === 11000) {
     customError.name = "Duplicate Values";
-    customError.message = `Duplicate value entered for ${Object.keys(
+    customError.message = `This ${Object.keys(
       err.keyValue
-    )} field. Please use another value.`;
+    )} is already used by a user. Please use another ${Object.keys(
+      err.keyValue
+    )}.`;
     customError.statusCode = StatusCodes.BAD_REQUEST;
   }
 

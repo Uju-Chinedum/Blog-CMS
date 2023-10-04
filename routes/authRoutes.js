@@ -2,23 +2,26 @@
 const express = require("express");
 const {
   register,
+  verify,
   google,
   github,
   twitter,
   login,
   logout,
 } = require("../controllers/authController");
+const { validateUser } = require("../validation")
 
 // Variable Declaration
 const router = express.Router();
 
 // Routes
-router.route("/register").post(register);
-router.route("/google").get(google);
-router.route("/github").get(github);
-router.route("/twitter").get(twitter);
-router.route("/login").post(login);
-router.route("/logout").post(logout);
+router.post("/register", validateUser, register);
+router.post("/verify-email", verify);
+router.get("/google", google);
+router.get("/github", github);
+router.get("/twitter", twitter);
+router.post("/login", login);
+router.post("/logout", logout);
 
 // Export
 module.exports = router;

@@ -56,6 +56,9 @@ const UserSchema = mongoose.Schema(
       required: [true, "Please confirm your password"],
       minlength: 6,
     },
+    profilePicture: {
+      type: String
+    },
     role: {
       type: String,
       enum: ["admin", "user"],
