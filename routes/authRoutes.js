@@ -4,7 +4,6 @@ const {
   register,
   verify,
   google,
-  github,
   twitter,
   login,
   logout,
@@ -18,7 +17,6 @@ const router = express.Router();
 router.post("/register", validateUser, register);
 router.post("/verify-email", verify);
 router.get("/google", google);
-router.get("/github", github);
 router.get("/twitter", twitter);
 router.post("/login", login);
 router.post("/logout", logout);

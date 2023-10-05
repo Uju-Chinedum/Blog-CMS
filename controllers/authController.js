@@ -29,7 +29,7 @@ const register = async (req, res) => {
   const origin = `${forwardedProtocol}://${forwardedHost}`;
 
   await verificationEmail({
-    name: user.firstName,
+    name: user.fullName,
     email: user.email,
     verificationToken: user.verificationToken,
     origin,
@@ -69,11 +69,6 @@ const google = async (req, res) => {
   res.send("google");
 };
 
-// Register User with GitHub
-const github = async (req, res) => {
-  res.send("github");
-};
-
 // Register User with Twitter
 const twitter = async (req, res) => {
   res.send("twitter");
@@ -104,7 +99,7 @@ const login = async (req, res) => {
   // and Check for Existing Token
   const tokenUser = createTokenUser(user)
   let refreshToken = ""
-  const existingToken = await Token.findOne({user: user_id})
+  const existingToken = await Token.findOne({user: user._id})
 
   if (existingToken) {
     const {isValid} = existingToken
@@ -141,7 +136,6 @@ module.exports = {
   register,
   verify,
   google,
-  github,
   twitter,
   login,
   logout,

@@ -6,19 +6,15 @@ const bcrypt = require("bcryptjs");
 // Schema
 const UserSchema = mongoose.Schema(
   {
-    firstName: {
+    fullName: {
       type: String,
-      required: [true, "Please provide a first name"],
-      trim: true,
-    },
-    lastName: {
-      type: String,
-      required: [true, "Please provide a first name"],
+      required: [true, "Please enter full name"],
       trim: true,
     },
     email: {
       type: String,
       unique: true,
+      index: true,
       validate: {
         validator: validator.isEmail,
         message: "Please provide a valid email.",
@@ -34,18 +30,6 @@ const UserSchema = mongoose.Schema(
       required: [true, "Please provide your matriculation number"],
       trim: true,
     },
-    phone: {
-      type: String,
-      unique: true,
-      validate: {
-        validator: validator.isMobilePhone,
-        message: "Please provide a valid phone number",
-      },
-    },
-    dob: {
-      type: Date,
-      required: [true, "Please provide a date of birth"],
-    },
     password: {
       type: String,
       required: [true, "Please provide a password"],
@@ -56,8 +40,10 @@ const UserSchema = mongoose.Schema(
       required: [true, "Please confirm your password"],
       minlength: 6,
     },
-    profilePicture: {
-      type: String
+    profilePicture: String,
+    numOfBlogs: {
+      type: Number,
+      default: 0
     },
     role: {
       type: String,
