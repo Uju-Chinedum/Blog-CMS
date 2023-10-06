@@ -175,7 +175,31 @@ const forgotPassword = async (req, res) => {
 
 // Reset Password
 const resetPassword = async (req, res) => {
-  res.send("reset password");
+  req.body.token = req.query.token;
+  req.body.email = req.query.email;
+  const { token, email, password } = req.body;
+
+  if (!token || !email || !password) {
+    throw new BadRequest("Missing Details", "Please provide all values");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    const currentDate = new Date();
+
+    if (
+      user.passwordToken === createHash(token) &&
+      user.passwordTokenExpirationDate > currentDate
+    ) {
+      user.password = password;
+      user.passwordToken = null;
+      user.passwordTokenExpirationDate = null;
+      await user.save();
+    }
+  }
+
+  res.status(StatusCodes.OK).json("Password Reset Successfully");
 };
 
 // Logout User
