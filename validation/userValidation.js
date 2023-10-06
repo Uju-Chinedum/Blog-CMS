@@ -3,24 +3,14 @@ const validator = require("validator");
 const { BadRequest } = require("../errors");
 
 const userValidationSchema = joi.object({
-  firstName: joi.string().required().trim(),
-  lastName: joi.string().required().trim(),
+  fullName: joi.string().required().trim(),
   email: joi.string().email().required(),
   school: joi.string().required().trim(),
   matNo: joi.string().required().trim(),
-  phone: joi
-    .string()
-    .trim()
-    .custom((value, helpers) => {
-      if (!validator.isMobilePhone(value)) {
-        return helpers.message("Please provide a valid phone number");
-      }
-      return value;
-    }),
-  dob: joi.date().required(),
   password: joi.string().required().min(6),
   confirmPassword: joi.string().required().valid(joi.ref("password")).min(6),
   profilePicture: joi.string(),
+  numOfBlogs: joi.number().default(0),
   role: joi.string().valid("admin", "user").default("user"),
   verificationToken: joi.string(),
   isVerified: joi.boolean().default(false),

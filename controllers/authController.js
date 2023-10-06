@@ -4,9 +4,16 @@ const crypto = require("crypto");
 
 // User Imports
 const User = require("../models/User");
-const Token = require("../models/Token")
+const Token = require("../models/Token");
 const { BadRequest, Unauthenticated } = require("../errors");
-const { verificationEmail, createTokenUser, attachCookiesToResponse } = require("../utils");
+const {
+  verificationEmail,
+  createTokenUser,
+  attachCookiesToResponse,
+  origin,
+  createHash,
+  resetPasswordEmail,
+} = require("../utils");
 
 // Register User with Email and Password
 const register = async (req, res) => {
@@ -24,15 +31,13 @@ const register = async (req, res) => {
   const user = await User.create(req.body);
 
   // Setting email verification
-  const forwardedProtocol = req.get("x-forwarded-proto"); // protocol of the url
-  const forwardedHost = req.get("x-forwarded-host"); // host url
-  const origin = `${forwardedProtocol}://${forwardedHost}`;
+  const hostUrl = origin(req);
 
   await verificationEmail({
     name: user.fullName,
     email: user.email,
     verificationToken: user.verificationToken,
-    origin,
+    hostUrl,
   });
 
   res.status(StatusCodes.CREATED).json({
@@ -76,17 +81,23 @@ const twitter = async (req, res) => {
 
 // Login User
 const login = async (req, res) => {
-  const {email, password} = req.body
+  const { email, password } = req.body;
   if (!email || !password) {
-    throw new BadRequest("Missing Details", "Please provide email and password");
+    throw new BadRequest(
+      "Missing Details",
+      "Please provide email and password"
+    );
   }
 
   const user = await User.findOne({ email });
   if (!user) {
-    throw new Unauthenticated("Invalid Credentials", `No user found with email: ${email}`);
+    throw new Unauthenticated(
+      "Invalid Credentials",
+      `No user found with email: ${email}`
+    );
   }
 
-  const isPassword = await user.comparePassword(password)
+  const isPassword = await user.comparePassword(password);
   if (!isPassword) {
     throw new Unauthenticated("Invalid Credentials", "Incorrect password");
   }
@@ -97,18 +108,18 @@ const login = async (req, res) => {
 
   // Creating JWT Payload, Create Refresh Token
   // and Check for Existing Token
-  const tokenUser = createTokenUser(user)
-  let refreshToken = ""
-  const existingToken = await Token.findOne({user: user._id})
+  const tokenUser = createTokenUser(user);
+  let refreshToken = "";
+  const existingToken = await Token.findOne({ user: user._id });
 
   if (existingToken) {
-    const {isValid} = existingToken
+    const { isValid } = existingToken;
     if (!isValid) {
-      throw new Unauthenticated("Invalid Credentials", "Token is not valid")
+      throw new Unauthenticated("Invalid Credentials", "Token is not valid");
     }
 
-    refreshToken = existingToken.refreshToken
-    attachCookiesToResponse({res, user: tokenUser, refreshToken})
+    refreshToken = existingToken.refreshToken;
+    attachCookiesToResponse({ res, user: tokenUser, refreshToken });
 
     res.status(StatusCodes.OK).json({ user: tokenUser });
     return;
@@ -126,9 +137,61 @@ const login = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
+// Forgot Password
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    throw new BadRequest("Missing Value", "Please enter email");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    // Create Password Token
+    const passwordToken = crypto.randomBytes(32).toString("hex");
+    // Send Email
+    const hostUrl = origin(req);
+    await resetPasswordEmail({
+      name: user.fullName,
+      email: user.email,
+      token: passwordToken,
+      hostUrl,
+    });
+
+    // Set Password Token to be valid for only 10 minutes
+    const tenMinutes = 1000 * 60 * 10;
+    const passwordTokenExpirationDate = new Date(Date.now() + tenMinutes);
+
+    // Update User Details
+    user.passwordToken = createHash();
+    user.passwordTokenExpirationDate = passwordTokenExpirationDate;
+    await user.save();
+  }
+
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "Please check your email for password reset link" });
+};
+
+// Reset Password
+const resetPassword = async (req, res) => {
+  res.send("reset password");
+};
+
 // Logout User
 const logout = async (req, res) => {
-  res.send("logout");
+  await Token.findOneAndDelete({ user: req.user.userId });
+
+  res.cookie("accessToken", "logout", {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+  });
+  res.cookie("refreshToken", "logout", {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+  });
+
+  res.status(StatusCodes.OK).json({ msg: "Logged out successfully" });
 };
 
 // Export
@@ -138,5 +201,7 @@ module.exports = {
   google,
   twitter,
   login,
+  forgotPassword,
+  resetPassword,
   logout,
 };
