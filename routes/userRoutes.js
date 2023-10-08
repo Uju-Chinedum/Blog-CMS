@@ -17,7 +17,7 @@ const router = express.Router();
 
 router
   .route("/")
-  .get([authenticateUser, authorizePermissions("admin")], getAllUsers);
+  .get(authenticateUser, getAllUsers);
 
 router.route("/show-me").get(authenticateUser, showCurrentUser);
 router.route("/update-user").patch(authenticateUser, updateUser);
@@ -26,7 +26,7 @@ router.route("/update-picture").post(authenticateUser, updatePicture);
 
 router
   .route("/delete-user")
-  .delete([authenticateUser, authorizePermissions], deleteUser);
+  .delete([authenticateUser, authorizePermissions("admin")], deleteUser);
 
 router.route("/:id").get(authenticateUser, getSingleUser);
 

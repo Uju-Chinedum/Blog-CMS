@@ -1,5 +1,12 @@
+const User = require("../models/User");
+const { StatusCodes } = require("http-status-codes");
+
 const getAllUsers = async (req, res) => {
-  res.send("get all users");
+  const users = await User.find({ role: "user" }).select(
+    "_id profilePicture fullName email school matNo"
+  );
+
+  res.status(StatusCodes.OK).json({ users });
 };
 
 const getSingleUser = async (req, res) => {

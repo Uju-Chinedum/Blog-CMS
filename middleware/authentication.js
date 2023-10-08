@@ -47,6 +47,7 @@ const authorizePermissions = (...roles) => {
         "Unauthorized to access this route"
       );
     }
+    next()
   };
 };
 
