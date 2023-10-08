@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const { NotFound, BadRequest } = require("../errors");
-const {createTokenUser, attachCookiesToResponse} = require("../utils")
+const { createTokenUser, attachCookiesToResponse } = require("../utils");
 
 // Properties too pull from profile
 const selection = "_id profilePicture fullName email school matNo";
@@ -35,18 +35,18 @@ const showCurrentUser = async (req, res) => {
 
 // Update your profile
 const updateUser = async (req, res) => {
-  const {fullName, email, school, matNo} = req.body
+  const { fullName, email, school, matNo } = req.body;
   if (!fullName || !email || !school || !matNo) {
-    throw new BadRequest("Missing Details", "Please fill all fields")
+    throw new BadRequest("Missing Details", "Please fill all fields");
   }
 
-  const user = await User.findOne({_id: req.user.userId})
-  
-  user.fullName = fullName
-  user.email = email
-  user.school = school
-  user.matNo = matNo
-  await user.save()
+  const user = await User.findOne({ _id: req.user.userId });
+
+  user.fullName = fullName;
+  user.email = email;
+  user.school = school;
+  user.matNo = matNo;
+  await user.save();
 
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
@@ -58,7 +58,22 @@ const updatePicture = async (req, res) => {
 };
 
 const updatePassword = async (req, res) => {
-  res.send("update password");
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword) {
+    throw new BadRequest("Missing Details", "Please fill all fields");
+  }
+
+  const user = await User.findOne({ _id: req.user.userId });
+
+  const isPassword = await user.comparePassword(oldPassword);
+  if (!isPassword) {
+    throw new Unauthenticated("Invalid Credentials", "Incorrect password");
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  res.status(StatusCodes.OK).json({ msg: "Password updated successfully" });
 };
 
 const deleteUser = async (req, res) => {
