@@ -11,7 +11,6 @@ const {
   createTokenUser,
   attachCookiesToResponse,
   origin,
-  createHash,
   resetPasswordEmail,
 } = require("../utils");
 
@@ -160,11 +159,11 @@ const forgotPassword = async (req, res) => {
 
     // Set Password Token to be valid for only 10 minutes
     const tenMinutes = 1000 * 60 * 10;
-    const passwordTokenExpirationDate = new Date(Date.now() + tenMinutes);
+    const passwordTokenExpiration = new Date(Date.now() + tenMinutes);
 
     // Update User Details
-    user.passwordToken = createHash();
-    user.passwordTokenExpirationDate = passwordTokenExpirationDate;
+    user.passwordToken = passwordToken
+    user.passwordTokenExpiration = passwordTokenExpiration;
     await user.save();
   }
 
@@ -189,17 +188,18 @@ const resetPassword = async (req, res) => {
     const currentDate = new Date();
 
     if (
-      user.passwordToken === createHash(token) &&
-      user.passwordTokenExpirationDate > currentDate
+      user.passwordToken === token &&
+      user.passwordTokenExpiration > currentDate
     ) {
       user.password = password;
       user.passwordToken = null;
-      user.passwordTokenExpirationDate = null;
+      user.passwordTokenExpiration = null;
       await user.save();
+      res.status(StatusCodes.OK).json({ msg: "Password Reset Successfully" });
+    } else {
+      throw new BadRequest("Invalid Token", "Token is invalid or expired");
     }
   }
-
-  res.status(StatusCodes.OK).json("Password Reset Successfully");
 };
 
 // Logout User

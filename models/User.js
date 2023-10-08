@@ -43,7 +43,7 @@ const UserSchema = mongoose.Schema(
     profilePicture: String,
     numOfBlogs: {
       type: Number,
-      default: 0
+      default: 0,
     },
     role: {
       type: String,
@@ -63,7 +63,7 @@ const UserSchema = mongoose.Schema(
 );
 
 UserSchema.pre("save", async function () {
-  if (!this.isModified("password") || !this.isModified("confirmPassword"))
+  if (!this.isModified("password"))
     return;
 
   const salt = await bcrypt.genSalt(16);
