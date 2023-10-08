@@ -1,16 +1,25 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
+const { NotFound } = require("../errors");
+
+const selection = "_id profilePicture fullName email school matNo";
 
 const getAllUsers = async (req, res) => {
-  const users = await User.find({ role: "user" }).select(
-    "_id profilePicture fullName email school matNo"
-  );
+  const users = await User.find({ role: "user" }).select(selection);
 
   res.status(StatusCodes.OK).json({ users });
 };
 
 const getSingleUser = async (req, res) => {
-  res.send("get single user");
+  const user = await User.findOne({ _id: req.params.id }).select(selection);
+  if (!user) {
+    throw new NotFound(
+      "User Not Found",
+      `No user found with id: ${req.params.id}`
+    );
+  }
+
+  res.status(StatusCodes.OK).json({ user });
 };
 
 const showCurrentUser = async (req, res) => {
