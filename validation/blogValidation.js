@@ -27,13 +27,17 @@ const blogValidationSchema = joi.object({
 });
 
 const validateBlog = (req, res, next) => {
+  req.body.user = req.user.userId
+
   const { error } = blogValidationSchema.validate(req.body, {
     abortEarly: false,
   });
+
   if (error) {
     const errorDetails = error.details.map((err) => err.message);
     throw new BadRequest("Validation Error", errorDetails);
   }
+  
   next();
 };
 

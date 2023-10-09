@@ -52,10 +52,12 @@ const validateUser = (req, res, next) => {
   const { error } = userValidationSchema.validate(req.body, {
     abortEarly: false, // Collect all validation errors, not just the first one
   });
+
   if (error) {
     const errorDetails = error.details.map((err) => err.message);
     throw new BadRequest("Validation Error", errorDetails);
   }
+  
   next();
 };
 
