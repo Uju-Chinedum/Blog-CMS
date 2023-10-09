@@ -56,7 +56,30 @@ const updateUser = async (req, res) => {
 
 // Update Profile Picture
 const updatePicture = async (req, res) => {
-  console.log(req.file);
+  const user = await User.findOne({ _id: req.user.userId });
+
+  if (!req.file) {
+    throw new BadRequest("File Not Found", "Please upload a file");
+  }
+  if (!req.file.mimetype.startsWith("image")) {
+    throw new BadRequest("Image Not Found", "Please upload an image");
+  }
+
+  const maxSize = 1024 * 1024 * 4;
+  if (req.file.size > maxSize) {
+    throw new BadRequest(
+      "File Size Too Large",
+      "Please upload image smaller than 4MB"
+    );
+  }
+
+  const picturePath = req.file.path;
+  user.profilePicture = picturePath;
+  await user.save();
+
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "Profile picture updated successfully" });
 };
 
 const updatePassword = async (req, res) => {
