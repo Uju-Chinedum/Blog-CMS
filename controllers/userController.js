@@ -2,9 +2,10 @@ const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const { NotFound, BadRequest } = require("../errors");
 const { createTokenUser, attachCookiesToResponse } = require("../utils");
+const multer = require("multer");
 
 // Properties too pull from profile
-const selection = "_id profilePicture fullName email school matNo";
+const selection = "_id profilePicture fullName email school matNo numOfBlogs";
 
 // Get all users
 const getAllUsers = async (req, res) => {
@@ -53,8 +54,9 @@ const updateUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
+// Update Profile Picture
 const updatePicture = async (req, res) => {
-  res.send("update picture");
+  console.log(req.file);
 };
 
 const updatePassword = async (req, res) => {

@@ -12,17 +12,20 @@ const {
   authenticateUser,
   authorizePermissions,
 } = require("../middleware/authentication");
+const multer = require("multer");
 
 const router = express.Router();
+const upload = multer({ dest: "../uploads/" });
 
-router
-  .route("/")
-  .get(authenticateUser, getAllUsers);
+router.route("/").get(authenticateUser, getAllUsers);
 
 router.route("/show-me").get(authenticateUser, showCurrentUser);
 router.route("/update-user").patch(authenticateUser, updateUser);
 router.route("/update-password").patch(authenticateUser, updatePassword);
-router.route("/update-picture").post(authenticateUser, updatePicture);
+
+router
+  .route("/update-picture")
+  .post(authenticateUser, upload.single("profilePicture"), updatePicture);
 
 router
   .route("/delete-user")
