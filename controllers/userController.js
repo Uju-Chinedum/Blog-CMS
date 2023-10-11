@@ -5,7 +5,8 @@ const { createTokenUser, attachCookiesToResponse } = require("../utils");
 const multer = require("multer");
 
 // Properties too pull from profile
-const selection = "_id profilePicture fullName email school matNo numOfBlogs";
+const selection =
+  "_id profilePicture fullName email school matNo numOfBlogs createdAt";
 
 // Get all users
 const getAllUsers = async (req, res) => {
@@ -65,11 +66,11 @@ const updatePicture = async (req, res) => {
     throw new BadRequest("Image Not Found", "Please upload an image");
   }
 
-  const maxSize = 1024 * 1024 * 4;
+  const maxSize = 1024 * 1024 * 3;
   if (req.file.size > maxSize) {
     throw new BadRequest(
       "File Size Too Large",
-      "Please upload image smaller than 4MB"
+      "Please upload image smaller than 3MB"
     );
   }
 

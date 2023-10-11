@@ -34,7 +34,7 @@ const updateBlog = async (req, res) => {
   });
 
   if (!blog) {
-    throw new CustomError.NotFoundError(`No blog with id : ${blogId}`);
+    throw new NotFound("Blog Not Found", `No blog with id : ${blogId}`);
   }
 
   res.status(StatusCodes.OK).json({ blog });
