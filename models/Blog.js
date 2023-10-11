@@ -24,6 +24,14 @@ const BlogSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
+    numOfLikes: {
+      type: Number,
+      default: 0,
+    },
+    numOfComments: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

@@ -1,6 +1,7 @@
 const Blog = require("../models/Blog");
 const { StatusCodes } = require("http-status-codes");
 const { NotFound } = require("../errors");
+const { checkPermissions } = require("../utils");
 
 const createBlog = async (req, res) => {
   const blog = await Blog.create(req.body);
@@ -36,6 +37,8 @@ const updateBlog = async (req, res) => {
   if (!blog) {
     throw new NotFound("Blog Not Found", `No blog with id : ${blogId}`);
   }
+
+  checkPermissions(req.user, blog.user);
 
   res.status(StatusCodes.OK).json({ blog });
 };

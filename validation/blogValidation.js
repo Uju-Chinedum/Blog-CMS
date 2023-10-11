@@ -24,10 +24,12 @@ const blogValidationSchema = joi.object({
     "string.empty": "User ID is required for the blog.",
     "string.hex": "User ID should be a valid hexadecimal string.",
   }),
+  numOfLikes: joi.number().default(0),
+  numOfComments: joi.number().default(0),
 });
 
 const validateBlog = (req, res, next) => {
-  req.body.user = req.user.userId
+  req.body.user = req.user.userId;
 
   const { error } = blogValidationSchema.validate(req.body, {
     abortEarly: false,
@@ -37,7 +39,7 @@ const validateBlog = (req, res, next) => {
     const errorDetails = error.details.map((err) => err.message);
     throw new BadRequest("Validation Error", errorDetails);
   }
-  
+
   next();
 };
 
