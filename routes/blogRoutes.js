@@ -7,7 +7,7 @@ const {
   deleteBlog,
 } = require("../controllers/blogController");
 const { authenticateUser } = require("../middleware/authentication");
-const { validateBlog } = require("../validation")
+const { validateBlog } = require("../validation");
 
 const router = express.Router();
 

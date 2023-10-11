@@ -12,6 +12,7 @@ const errorHandler = require("./middleware/errorHandler");
 const authRouter = require("./routes/authRoutes");
 const userRouter = require("./routes/userRoutes");
 const blogRouter = require("./routes/blogRoutes");
+const commentRouter = require("./routes/commentRoute")
 
 // Variable Declarations
 const app = express();
@@ -26,6 +27,7 @@ app.use(morgan("dev"));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/blog", blogRouter);
+app.use("/api/v1/comment", commentRouter);
 
 // Error Middleware
 app.use(notFound);
