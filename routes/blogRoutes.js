@@ -1,4 +1,7 @@
 const express = require("express");
+const { authenticateUser } = require("../middleware/authentication");
+const { validateBlog, validateComment } = require("../validation");
+
 const {
   createBlog,
   getAllBlogs,
@@ -6,13 +9,14 @@ const {
   updateBlog,
   deleteBlog,
 } = require("../controllers/blogController");
+
 const {
   createComment,
   getAllComments,
   deleteComment,
 } = require("../controllers/commentController");
-const { authenticateUser } = require("../middleware/authentication");
-const { validateBlog, validateComment } = require("../validation");
+
+const switchLike = require("../controllers/likeController");
 
 const router = express.Router();
 
@@ -35,5 +39,7 @@ router
 router
   .route("/:blogId/comment/:commentId")
   .delete(authenticateUser, deleteComment);
+
+router.post("/:blogId/like", authenticateUser, switchLike);
 
 module.exports = router;
