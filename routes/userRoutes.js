@@ -15,7 +15,7 @@ const {
 const multer = require("multer");
 
 const router = express.Router();
-const upload = multer({ dest: "../uploads/" });
+const upload = multer({ dest: "./uploads/" });
 
 router.route("/").get(authenticateUser, getAllUsers);
 

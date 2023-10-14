@@ -21,7 +21,7 @@ const commentValidationSchema = joi.object({
 
 const validateComment = (req, res, next) => {
   req.body.user = req.user.userId;
-  req.body.blog = req.params.id;
+  req.body.blog = req.params.blogId;
 
   const { error } = commentValidationSchema.validate(req.body, {
     abortEarly: false,
