@@ -11,14 +11,43 @@ const CommentSchema = mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
     blog: {
       type: mongoose.Types.ObjectId,
       ref: "Blog",
       required: true,
+      index: true,
     },
   },
   { timestamps: true }
 );
+
+CommentSchema.statics.increaseComments = async function (blogId) {
+  const result = await this.aggregate([
+    { $match: { blog: blogId } },
+    {
+      $group: {
+        _id: null,
+        numOfComments: { $sum: 1 },
+      },
+    },
+  ]);
+
+  try {
+    await this.model("Blog").findOneAndUpdate(
+      { _id: blogId },
+      {
+        numOfComments: result[0]?.numOfComments || 0,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+CommentSchema.post("save", async function () {
+  await this.constructor.increaseComments(this.blog);
+});
 
 module.exports = mongoose.model("Comment", CommentSchema);

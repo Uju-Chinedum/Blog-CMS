@@ -44,7 +44,18 @@ const updateBlog = async (req, res) => {
 };
 
 const deleteBlog = async (req, res) => {
-  res.send("delete blog");
+  const { id: blogId } = req.params;
+
+  const blog = await Blog.findOne({ _id: blogId });
+  if (!blog) {
+    throw new NotFound("Blog Not Found", `No blog with id: ${blogId}`);
+  }
+
+  checkPermissions(req.user, blog.user);
+  await blog.deleteOne();
+  await Blog.increaseBlogs(blog.user);
+
+  res.status(StatusCodes.OK).json({ msg: "Blog deleted successfully" });
 };
 
 module.exports = {
