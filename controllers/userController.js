@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const Blog = require("../models/Blog");
+const Comment = require("../models/Comment");
 const { StatusCodes } = require("http-status-codes");
 const { NotFound, BadRequest } = require("../errors");
 const { createTokenUser, attachCookiesToResponse } = require("../utils");
@@ -103,7 +105,18 @@ const updatePassword = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  res.send("delete user");
+  const { id: userId } = req.params;
+
+  const user = await User.findOne({ _id: userId });
+  if (!user) {
+    throw new NotFound("User Not Found", `No user with id : ${userId}`);
+  }
+
+  await Blog.deleteMany({ user: user._id });
+  await Comment.deleteMany({ user: user._id });
+  await user.deleteOne();
+
+  res.status(StatusCodes.OK).json({ msg: "User account deleted successfully" });
 };
 
 module.exports = {

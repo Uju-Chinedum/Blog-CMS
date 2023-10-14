@@ -78,9 +78,4 @@ BlogSchema.post("save", async function () {
   await this.constructor.increaseBlogs(this.user);
 });
 
-BlogSchema.pre("remove", async function (next) {
-  await this.model("Comment").deleteMany({ blog: this._id });
-  await this.model("Likes").deleteMany({ blog: this._id });
-});
-
 module.exports = mongoose.model("Blog", BlogSchema);
