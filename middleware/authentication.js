@@ -1,4 +1,4 @@
-// Imports
+// User Defined Imports
 const { isTokenValid, attachCookiesToResponse } = require("../utils");
 const Token = require("../models/Token");
 const { Unauthenticated, Unauthorized } = require("../errors");

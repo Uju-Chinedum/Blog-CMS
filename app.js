@@ -1,4 +1,4 @@
-// System Imports
+// Package Imports
 require("dotenv").config();
 require("express-async-errors");
 const express = require("express");
@@ -31,7 +31,7 @@ app.use("/api/v1/blog", blogRouter);
 app.use(notFound);
 app.use(errorHandler);
 
-// Starting Server
+// Setup of Server
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
@@ -43,4 +43,5 @@ const start = async () => {
   }
 };
 
+// Starting Server
 start();

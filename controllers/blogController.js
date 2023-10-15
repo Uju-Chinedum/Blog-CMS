@@ -1,5 +1,8 @@
-const Blog = require("../models/Blog");
+// Package Imports
 const { StatusCodes } = require("http-status-codes");
+
+// User Defined Imports
+const Blog = require("../models/Blog");
 const { NotFound } = require("../errors");
 const { checkPermissions } = require("../utils");
 
@@ -38,6 +41,8 @@ const updateBlog = async (req, res) => {
     throw new NotFound("Blog Not Found", `No blog with id : ${blogId}`);
   }
 
+  // Check to see that the bog was created
+  // by the person trying to update it
   checkPermissions(req.user, blog.user);
 
   res.status(StatusCodes.OK).json({ blog });
@@ -51,8 +56,12 @@ const deleteBlog = async (req, res) => {
     throw new NotFound("Blog Not Found", `No blog with id: ${blogId}`);
   }
 
+  // Check to see that the bog was created
+  // by the person trying to delete it
   checkPermissions(req.user, blog.user);
   await blog.deleteOne();
+
+  // Decrease the numOfBlogs of the user
   await Blog.increaseBlogs(blog.user);
 
   res.status(StatusCodes.OK).json({ msg: "Blog deleted successfully" });

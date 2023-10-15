@@ -37,6 +37,7 @@ const BlogSchema = mongoose.Schema(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+// Increase numOfBlogs when a user creates a blog
 BlogSchema.statics.increaseBlogs = async function (userId) {
   const result = await this.aggregate([
     { $match: { user: userId } },

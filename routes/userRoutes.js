@@ -1,4 +1,8 @@
+// Package Imports
 const express = require("express");
+const multer = require("multer");
+
+// User defined Imports
 const {
   getAllUsers,
   getSingleUser,
@@ -12,11 +16,12 @@ const {
   authenticateUser,
   authorizePermissions,
 } = require("../middleware/authentication");
-const multer = require("multer");
 
+// Variable Declaration
 const router = express.Router();
 const upload = multer({ dest: "./uploads/" });
 
+// Routes
 router.route("/").get(authenticateUser, getAllUsers);
 
 router.route("/show-me").get(authenticateUser, showCurrentUser);
@@ -33,4 +38,5 @@ router
 
 router.route("/:id").get(authenticateUser, getSingleUser);
 
+// Exports
 module.exports = router;

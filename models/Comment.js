@@ -23,6 +23,7 @@ const CommentSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+// Increase the numOfComments when a user creates a comment
 CommentSchema.statics.increaseComments = async function (blogId) {
   const result = await this.aggregate([
     { $match: { blog: blogId } },

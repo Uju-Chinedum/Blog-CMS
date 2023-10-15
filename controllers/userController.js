@@ -1,10 +1,12 @@
+// System Imports
+const { StatusCodes } = require("http-status-codes");
+
+// User Defined Imports
 const User = require("../models/User");
 const Blog = require("../models/Blog");
 const Comment = require("../models/Comment");
-const { StatusCodes } = require("http-status-codes");
-const { NotFound, BadRequest } = require("../errors");
+const { NotFound, BadRequest, Unauthenticated } = require("../errors");
 const { createTokenUser, attachCookiesToResponse } = require("../utils");
-const multer = require("multer");
 
 // Properties too pull from profile
 const selection =
@@ -30,7 +32,7 @@ const getSingleUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user });
 };
 
-// Get your profile
+// Get the user's profile
 const showCurrentUser = async (req, res) => {
   const me = await User.findOne({ _id: req.user.userId }).select(selection);
 
@@ -61,9 +63,12 @@ const updateUser = async (req, res) => {
 const updatePicture = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
 
+  // Check to see if there is a file
   if (!req.file) {
     throw new BadRequest("File Not Found", "Please upload a file");
   }
+
+  // Check to see if there is a file is an image
   if (!req.file.mimetype.startsWith("image")) {
     throw new BadRequest("Image Not Found", "Please upload an image");
   }
@@ -105,15 +110,24 @@ const updatePassword = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  const { id: userId } = req.params;
-
-  const user = await User.findOne({ _id: userId });
-  if (!user) {
-    throw new NotFound("User Not Found", `No user with id : ${userId}`);
+  const { name } = req.body;
+  if (!name) {
+    throw new BadRequest(
+      "Missing Details",
+      "Please input your full name as it is in your acount"
+    );
   }
 
+  const user = await User.findOne({ _id: req.user.userId });
+  if (name !== user.fullName) {
+    throw new Unauthenticated("Invalid Credentials", "Name does not match");
+  }
+
+  // Delete all blogs associated with user
   await Blog.deleteMany({ user: user._id });
+  // Delete all comments associated with user
   await Comment.deleteMany({ user: user._id });
+  // Delete user
   await user.deleteOne();
 
   res.status(StatusCodes.OK).json({ msg: "User account deleted successfully" });

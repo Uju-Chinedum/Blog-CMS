@@ -73,11 +73,6 @@ const google = async (req, res) => {
   res.send("google");
 };
 
-// Register User with Twitter
-const twitter = async (req, res) => {
-  res.send("twitter");
-};
-
 // Login User
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -223,7 +218,6 @@ module.exports = {
   register,
   verify,
   google,
-  twitter,
   login,
   forgotPassword,
   resetPassword,

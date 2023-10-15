@@ -15,6 +15,7 @@ const LikeSchema = mongoose.Schema({
   },
 });
 
+// Incease numOfLikes when a user likes a blog
 LikeSchema.statics.increaseLikes = async function (blogId) {
   const result = await this.aggregate([
     { $match: { blog: blogId } },

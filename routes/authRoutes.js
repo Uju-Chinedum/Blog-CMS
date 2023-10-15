@@ -1,10 +1,11 @@
-// Imports
+// Package Imports
 const express = require("express");
+
+// User Defined Imports
 const {
   register,
   verify,
   google,
-  twitter,
   login,
   forgotPassword,
   resetPassword,
@@ -20,7 +21,6 @@ const router = express.Router();
 router.post("/register", validateUser, register);
 router.post("/verify-email", verify);
 router.get("/google", google);
-router.get("/twitter", twitter);
 router.post("/login", login);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
