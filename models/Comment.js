@@ -10,12 +10,14 @@ const CommentSchema = mongoose.Schema(
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",
+      unique: true,
       required: true,
       index: true,
     },
     blog: {
       type: mongoose.Types.ObjectId,
       ref: "Blog",
+      unique: true,
       required: true,
       index: true,
     },

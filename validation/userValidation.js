@@ -28,7 +28,8 @@ const userValidationSchema = joi.object({
     "string.empty": "Password should not be empty.",
     "string.min": "Password must be at least 6 characters long.",
   }),
-  confirmPassword: joi.string()
+  confirmPassword: joi
+    .string()
     .required()
     .valid(joi.ref("password"))
     .min(6)
@@ -41,6 +42,10 @@ const userValidationSchema = joi.object({
   profilePicture: joi.string(),
   numOfBlogs: joi.number().default(0),
   role: joi.string().valid("admin", "user").default("user"),
+  google: joi.object({
+    id: joi.string(),
+    token: joi.string(),
+  }),
   verificationToken: joi.string(),
   isVerified: joi.boolean().default(false),
   verified: joi.date(),

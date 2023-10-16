@@ -68,11 +68,6 @@ const verify = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Email Verified" });
 };
 
-// Register User with Google
-const google = async (req, res) => {
-  res.send("google");
-};
-
 // Login User
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -131,6 +126,20 @@ const login = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
+// Login with Google
+const google = async (req, res) => {
+  const tokenUser = createTokenUser(user);
+  refreshToken = crypto.randomBytes(32).toString("hex");
+  const userAgent = req.headers["user-agent"];
+  const ip = req.ip;
+  const userToken = { refreshToken, ip, userAgent, user: user._id };
+
+  await Token.create(userToken);
+
+  attachCookiesToResponse({ res, user: tokenUser, refreshToken });
+  res.redirect("/api/v1/blog");
+};
+
 // Forgot Password
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -157,7 +166,7 @@ const forgotPassword = async (req, res) => {
     const passwordTokenExpiration = new Date(Date.now() + tenMinutes);
 
     // Update User Details
-    user.passwordToken = passwordToken
+    user.passwordToken = passwordToken;
     user.passwordTokenExpiration = passwordTokenExpiration;
     await user.save();
   }
@@ -217,8 +226,8 @@ const logout = async (req, res) => {
 module.exports = {
   register,
   verify,
-  google,
   login,
+  google,
   forgotPassword,
   resetPassword,
   logout,

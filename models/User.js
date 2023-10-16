@@ -50,6 +50,10 @@ const UserSchema = mongoose.Schema(
       enum: ["admin", "user"],
       default: "user",
     },
+    google: {
+      id: String,
+      token: String,
+    },
     verificationToken: String,
     isVerified: {
       type: Boolean,
@@ -69,15 +73,16 @@ UserSchema.virtual("blogs", {
   justOne: false,
 });
 
+// Hashing Password
 UserSchema.pre("save", async function () {
-  if (!this.isModified("password"))
-    return;
+  if (!this.isModified("password")) return;
 
   const salt = await bcrypt.genSalt(16);
   this.password = await bcrypt.hash(this.password, salt);
   this.confirmPassword = this.password;
 });
 
+// Checking Password
 UserSchema.methods.comparePassword = async function (candidate) {
   const isMatch = await bcrypt.compare(candidate, this.password);
   return isMatch;
