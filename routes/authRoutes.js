@@ -19,19 +19,19 @@ const passport = require("../middleware/passport");
 const router = express.Router();
 
 // Routes
-router.post("/register", validateUser, register);
-router.post("/verify-email", verify);
-router.post("/login", login);
-
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
-router.get(
-  process.env.CALLBACK_URL,
+router.use(
+  "/callback",
   passport.authenticate("google", { failureRedirect: "/api/v1/auth/login" }),
   google
 );
+
+router.post("/register", validateUser, register);
+router.post("/verify-email", verify);
+router.post("/login", login);
 
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);

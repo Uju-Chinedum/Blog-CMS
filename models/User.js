@@ -8,7 +8,9 @@ const UserSchema = mongoose.Schema(
   {
     fullName: {
       type: String,
-      required: [true, "Please enter full name"],
+      required: function () {
+        return !this.google.id && !this.google.token;
+      },
       trim: true,
     },
     email: {
@@ -22,22 +24,29 @@ const UserSchema = mongoose.Schema(
     },
     school: {
       type: String,
-      required: [true, "Please provide your university"],
+      required: function () {
+      },
       trim: true,
     },
     matNo: {
       type: String,
-      required: [true, "Please provide your matriculation number"],
+      required: function () {
+        return !this.google.id && !this.google.token;
+      },
       trim: true,
     },
     password: {
       type: String,
-      required: [true, "Please provide a password"],
+      required: function () {
+        return !this.google.id && !this.google.token;
+      },
       minlength: 6,
     },
     confirmPassword: {
       type: String,
-      required: [true, "Please confirm your password"],
+      required: function () {
+        return !this.google.id && !this.google.token;
+      },
       minlength: 6,
     },
     profilePicture: String,

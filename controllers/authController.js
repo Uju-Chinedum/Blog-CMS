@@ -128,6 +128,11 @@ const login = async (req, res) => {
 
 // Login with Google
 const google = async (req, res) => {
+  const user = req.user;
+  if (!user) {
+    return res.status(401).json({ message: "Google Sign-In failed." });
+  }
+
   const tokenUser = createTokenUser(user);
   refreshToken = crypto.randomBytes(32).toString("hex");
   const userAgent = req.headers["user-agent"];
@@ -137,8 +142,9 @@ const google = async (req, res) => {
   await Token.create(userToken);
 
   attachCookiesToResponse({ res, user: tokenUser, refreshToken });
-  res.redirect("/api/v1/blog");
+  res.redirect(`/api/v1/user/${user._id}`);
 };
+
 
 // Forgot Password
 const forgotPassword = async (req, res) => {
