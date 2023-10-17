@@ -54,11 +54,6 @@ const UserSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    role: {
-      type: String,
-      enum: ["admin", "user"],
-      default: "user",
-    },
     google: {
       id: String,
       token: String,

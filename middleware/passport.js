@@ -23,7 +23,6 @@ passport.use(
           user = new User({
             fullName: profile.displayName,
             email: profile.emails[0].value,
-            role: "user",
             isVerified: true,
             verified: Date.now(),
             google: {

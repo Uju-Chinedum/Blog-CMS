@@ -20,11 +20,8 @@ const register = async (req, res) => {
     throw new BadRequest("Incorrect Password", "Passwords do not match.");
   }
 
-  // Add roles to users and make first user admin
-  const isFirstAccount = (await User.countDocuments({})) === 0;
-  const role = isFirstAccount ? "admin" : "user";
+  // Setting verification token
   const verificationToken = crypto.randomBytes(32).toString("hex");
-  req.body.role = role;
   req.body.verificationToken = verificationToken;
 
   const user = await User.create(req.body);

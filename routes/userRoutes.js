@@ -12,10 +12,7 @@ const {
   updatePicture,
   deleteUser,
 } = require("../controllers/userController");
-const {
-  authenticateUser,
-  authorizePermissions,
-} = require("../middleware/authentication");
+const { authenticateUser } = require("../middleware/authentication");
 
 // Variable Declaration
 const router = express.Router();
@@ -32,9 +29,7 @@ router
   .route("/update-picture")
   .post(authenticateUser, upload.single("profilePicture"), updatePicture);
 
-router
-  .route("/delete-user")
-  .delete([authenticateUser, authorizePermissions("admin")], deleteUser);
+router.route("/delete-user").delete(authenticateUser, deleteUser);
 
 router.route("/:id").get(authenticateUser, getSingleUser);
 
