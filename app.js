@@ -5,6 +5,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 
 // User Imports
 const connectDB = require("./db/connect");
@@ -22,11 +23,18 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 app.use(morgan("dev"));
-app.use(session({
-  secret: process.env.JWT_SECRET,
-  resave: false,
-  saveUninitialized: false,
-}));
+app.use(
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      ttl: 86400,  // 1 day in seconds
+      touchAfter: 2 * 3600,  // 2 hours in seconds
+    }),
+  })
+);
 
 // Route Middleware
 app.use("/api/v1/auth", authRouter);
