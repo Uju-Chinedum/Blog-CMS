@@ -10,7 +10,6 @@ const TokenSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       index: true,
       ref: "User",
-      unique: true,
       required: true,
     },
   },

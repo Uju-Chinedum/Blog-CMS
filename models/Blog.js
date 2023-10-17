@@ -22,7 +22,6 @@ const BlogSchema = mongoose.Schema(
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",
-      unique: true,
       required: true,
       index: true,
     },

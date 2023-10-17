@@ -14,9 +14,33 @@ const selection =
 
 // Get all users
 const getAllUsers = async (req, res) => {
-  const users = await User.find({ role: "user" }).select(selection);
+  const { sort, search } = req.query;
+  const queryObject = { role: "user" };
 
-  res.status(StatusCodes.OK).json({ users });
+  if (search) {
+    queryObject.position = { $regex: search, $options: "i" };
+  }
+
+  let result = User.find(queryObject);
+
+  if (sort === "a-z") {
+    result = result.sort("position");
+  }
+  if (sort === "z-a") {
+    result = result.sort("-position");
+  }
+
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
+
+  result = result.skip(skip).limit(limit);
+  const users = await result;
+
+  const totalUsers = await User.countDocuments(queryObject);
+  const numOfPages = Math.ceil(totalUsers / limit);
+
+  res.status(StatusCodes.OK).json({ users, totalUsers, numOfPages });
 };
 
 // Get a single user's profile
