@@ -2,7 +2,30 @@ const joi = require("joi");
 const { BadRequest } = require("../errors");
 
 const userValidationSchema = joi.object({
-  fullName: joi
+  firstName: joi
+    .string()
+    .required()
+    .trim()
+    .when(
+      joi
+        .object({
+          google: joi.object({
+            id: joi.string().required(),
+            token: joi.string().required(),
+          }),
+        })
+        .unknown(),
+      {
+        then: joi.forbidden(),
+        otherwise: joi.required(),
+      }
+    )
+    .messages({
+      "any.required": "Full name is required.",
+      "string.empty": "Full name should not be empty.",
+      "string.trim": "Full name should not have leading or trailing spaces.",
+    }),
+  lastName: joi
     .string()
     .required()
     .trim()

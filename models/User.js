@@ -6,7 +6,14 @@ const bcrypt = require("bcryptjs");
 // Schema
 const UserSchema = mongoose.Schema(
   {
-    fullName: {
+    firstName: {
+      type: String,
+      required: function () {
+        return !this.google.id && !this.google.token;
+      },
+      trim: true,
+    },
+    lastName: {
       type: String,
       required: function () {
         return !this.google.id && !this.google.token;
@@ -81,7 +88,7 @@ UserSchema.virtual("blogs", {
 UserSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
 
-  const salt = await bcrypt.genSalt(16);
+  const salt = await bcrypt.genSalt(8);
   this.password = await bcrypt.hash(this.password, salt);
   this.confirmPassword = this.password;
 });
