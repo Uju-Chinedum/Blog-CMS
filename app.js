@@ -6,6 +6,10 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const helmet = require("helmet");
+const xss = require("xss-clean");
+const cors = require("cors");
+const mongoSanitize = require("express-mongo-sanitize");
 
 // User Imports
 const connectDB = require("./db/connect");
@@ -18,6 +22,12 @@ const blogRouter = require("./routes/blogRoutes");
 // Variable Declarations
 const app = express();
 const port = process.env.PORT || 5000;
+
+// Security Middleware
+app.use(helmet());
+app.use(xss());
+app.use(cors());
+app.use(mongoSanitize());
 
 // Access Middleware
 app.use(express.json());
