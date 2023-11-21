@@ -15,19 +15,19 @@ const selection =
 // Get all users
 const getAllUsers = async (req, res) => {
   const { sort, search } = req.query;
-  const queryObject = { role: "user" };
+  const queryObject = {};
 
   if (search) {
     queryObject.position = { $regex: search, $options: "i" };
   }
 
-  let result = User.find(queryObject);
+  let result = User.find(queryObject).select(selection);
 
-  if (sort === "a-z") {
-    result = result.sort("position");
+  if (!sort || sort === "a-z") {
+    result = result.sort("firstName");
   }
   if (sort === "z-a") {
-    result = result.sort("-position");
+    result = result.sort("-firstName");
   }
 
   const page = Number(req.query.page) || 1;
@@ -65,14 +65,15 @@ const showCurrentUser = async (req, res) => {
 
 // Update your profile
 const updateUser = async (req, res) => {
-  const { fullName, email, school, matNo } = req.body;
-  if (!fullName || !email || !school || !matNo) {
+  const { firstName, lastName, email, school, matNo } = req.body;
+  if (!firstName || !lastName || !email || !school || !matNo) {
     throw new BadRequest("Missing Details", "Please fill all fields");
   }
 
   const user = await User.findOne({ _id: req.user.userId });
 
-  user.fullName = fullName;
+  user.firstName = firstName;
+  user.lastName = lastName;
   user.email = email;
   user.school = school;
   user.matNo = matNo;
@@ -138,13 +139,18 @@ const deleteUser = async (req, res) => {
   if (!name) {
     throw new BadRequest(
       "Missing Details",
-      "Please input your full name as it is in your acount"
+      "Please input your full name as it is in your account. First Name followed by Last Name. No space required"
     );
   }
 
   const user = await User.findOne({ _id: req.user.userId });
-  if (name !== user.fullName) {
-    throw new Unauthenticated("Invalid Credentials", "Name does not match");
+
+  const userName = user.firstName + user.lastName;
+  if (name !== userName) {
+    throw new Unauthenticated(
+      "Invalid Credentials",
+      "Name does not match. Enter First Name followed by Last Name. No space required"
+    );
   }
 
   // Delete all blogs associated with user

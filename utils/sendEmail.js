@@ -10,6 +10,9 @@ const sendEmail = async ({ to, subject, html }) => {
       clientId: process.env.OAUTH_CLIENTID,
       clientSecret: process.env.OAUTH_CLIENT_SECRET,
       refreshToken: process.env.OAUTH_REFRESH_TOKEN,
+      tls: {
+        rejectUnauthorized: false,
+      },
     },
   });
 
