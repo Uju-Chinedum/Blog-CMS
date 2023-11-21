@@ -1,0 +1,455 @@
+openapi: 3.0.0
+info:
+  title: Blog-CMS
+  version: 1.0.0
+servers:
+  - url: https://blog-cms-2f0u.onrender.com/api/v1
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: accessToken
+tags:
+  - name: Auth
+  - name: User
+  - name: Blog
+  - name: Favourite
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                firstName: Cassandra
+                lastName: Johnston
+                email: cassandra9@ethereal.email
+                school: University of Lagos
+                matNo: UL2019-446922
+                password: secret
+                confirmPassword: secret
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/verify-email:
+    post:
+      tags:
+        - Auth
+      summary: Verify Email
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: ''
+      parameters:
+        - name: token
+          in: query
+          schema:
+            type: string
+          example: aba74de7da1cab34e18f384ef24312c3e64341835d46a42f9aaaf033f42d9924
+        - name: email
+          in: query
+          schema:
+            type: string
+          example: cassandra9@ethereal.email
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/google:
+    get:
+      tags:
+        - Auth
+      summary: Google
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: cassandra9@ethereal.email
+                password: secret
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/forgot-password:
+    post:
+      tags:
+        - Auth
+      summary: Forgot Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: furman89@ethereal.email
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/reset-password:
+    post:
+      tags:
+        - Auth
+      summary: Reset Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                password: secret
+      parameters:
+        - name: token
+          in: query
+          schema:
+            type: string
+          example: c797bf50f746b10813cd159ca46c4d785988cff9955e40359b8689ec6ceb372f
+        - name: email
+          in: query
+          schema:
+            type: string
+          example: furman89@ethereal.email
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Logout
+      security:
+        - cookieAuth: []
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user:
+    get:
+      tags:
+        - User
+      summary: Get All Users
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/{user_id}:
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the user
+    get:
+      tags:
+        - User
+      summary: Get Single User
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/show-me:
+    get:
+      tags:
+        - User
+      summary: Show Current User
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/update-user:
+    patch:
+      tags:
+        - User
+      summary: Update User
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                firstName: Furman
+                lastName: Schulist
+                email: furman89@ethereal.email
+                school: EHSAL - Europese Hogeschool Brussel
+                matNo: '474781027'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/update-password:
+    patch:
+      tags:
+        - User
+      summary: Update Password
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                oldPassword: secret
+                newPassword: secret123
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/update-picture:
+    post:
+      tags:
+        - User
+      summary: Update Picture
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                profilePicture:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /user/delete-user:
+    delete:
+      tags:
+        - User
+      summary: Delete User
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /blog:
+    post:
+      tags:
+        - Blog
+      summary: Create Blog
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                title: e-enable bleeding-edge bandwidth
+                description: Customer-focused tertiary challenge
+                content: >-
+                  Cras in purus eu magna vulputate luctus. Cum sociis natoque
+                  penatibus et magnis dis parturient montes, nascetur ridiculus
+                  mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque
+                  penatibus et magnis dis parturient montes, nascetur ridiculus
+                  mus. Etiam vel augue.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Blog
+      summary: Get All Blogs
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+          example: a-z
+        - name: page
+          in: query
+          schema:
+            type: integer
+          example: '2'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /blog/{blog_id}:
+    parameters:
+      - name: blog_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the blog
+    get:
+      tags:
+        - Blog
+      summary: Get Single Blog
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Blog
+      summary: Update Blog
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                title: Test
+                description: Just a test
+                content: Seriously, this is just a test
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Blog
+      summary: Delete Blog
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /blog/{blog_id}/comment:
+    parameters:
+      - name: blog_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the blog
+    get:
+      tags:
+        - Favourite
+      summary: Get All Comments
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Favourite
+      summary: Create 
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                feedback: Not sure I like it
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /blog/{blog_id}/comment/{comment_id}:
+    parameters:
+      - name: blog_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the event
+      - name: comment_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the comment
+    delete:
+      tags:
+        - Favourite
+      summary: Delete Comment
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /blog/{blog_id}/like:
+    parameters:
+      - name: blog_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the blog
+    post:
+      tags:
+        - Favourite
+      summary: Like
+      security:
+        - cookieAuth: []
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}

@@ -10,6 +10,8 @@ const helmet = require("helmet");
 const xss = require("xss-clean");
 const cors = require("cors");
 const mongoSanitize = require("express-mongo-sanitize");
+const swagger = require("swagger-ui-express");
+const yaml = require("yamljs");
 
 // User Imports
 const connectDB = require("./db/connect");
@@ -22,6 +24,7 @@ const blogRouter = require("./routes/blogRoutes");
 // Variable Declarations
 const app = express();
 const port = process.env.PORT || 5000;
+const swaggerDocs = yaml.load("./swagger.yaml");
 
 // Security Middleware
 app.use(helmet());
@@ -31,6 +34,7 @@ app.use(mongoSanitize());
 
 // Access Middleware
 app.use(express.json());
+app.use(express.static("./public"));
 app.use(cookieParser(process.env.JWT_SECRET));
 app.use(morgan("dev"));
 app.use(
@@ -50,6 +54,7 @@ app.use(
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/blog", blogRouter);
+app.use("/api-docs", swagger.serve, swagger.setup(swaggerDocs));
 
 // Error Middleware
 app.use(notFound);
