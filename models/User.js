@@ -22,6 +22,9 @@ const UserSchema = mongoose.Schema(
     },
     email: {
       type: String,
+      required: function () {
+        return !this.google.id && !this.google.token;
+      },
       unique: true,
       index: true,
       validate: {
@@ -32,6 +35,7 @@ const UserSchema = mongoose.Schema(
     school: {
       type: String,
       required: function () {
+        return !this.google.id && !this.google.token;
       },
       trim: true,
     },
@@ -56,7 +60,12 @@ const UserSchema = mongoose.Schema(
       },
       minlength: 6,
     },
-    profilePicture: String,
+    profilePicture: {
+      type: String,
+      default: function () {
+        return `${this.firstName[0].toUpperCase()}${this.lastName[0].toUpperCase()}`;
+      },
+    },
     numOfBlogs: {
       type: Number,
       default: 0,
