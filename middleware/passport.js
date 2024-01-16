@@ -21,7 +21,8 @@ passport.use(
         } else {
           // Create new user
           user = new User({
-            fullName: profile.displayName,
+            firstName: profile.name.givenName,
+            lastName: profile.name.familyName,
             email: profile.emails[0].value,
             isVerified: true,
             verified: Date.now(),
