@@ -10,12 +10,12 @@ const { createTokenUser, attachCookiesToResponse } = require("../utils");
 
 // Properties too pull from profile
 const selection =
-  "_id profilePicture fullName email school matNo numOfBlogs createdAt";
+  "_id profilePicture firstName lastName email school matNo numOfBlogs createdAt";
 
 // Get all users
 const getAllUsers = async (req, res) => {
   const { sort, search } = req.query;
-  const queryObject = {};
+  const queryObject = { isVerified: true };
 
   if (search) {
     queryObject.position = { $regex: search, $options: "i" };
