@@ -59,6 +59,12 @@ const getSingleBlog = async (req, res) => {
   res.status(StatusCodes.OK).json({ blog });
 };
 
+const getMyBlogs = async (req, res) => {
+  const mine = await Blog.findOne({ user: req.user.userId });
+
+  res.status(StatusCodes.OK).json({ blogs: mine });
+};
+
 const updateBlog = async (req, res) => {
   const { id: blogId } = req.params;
 
@@ -101,6 +107,7 @@ module.exports = {
   createBlog,
   getAllBlogs,
   getSingleBlog,
+  getMyBlogs,
   updateBlog,
   deleteBlog,
 };

@@ -10,6 +10,7 @@ const {
   createBlog,
   getAllBlogs,
   getSingleBlog,
+  getMyBlogs,
   updateBlog,
   deleteBlog,
 } = require("../controllers/blogController");
@@ -21,7 +22,7 @@ const {
   deleteComment,
 } = require("../controllers/commentController");
 
-// Like COntroller
+// Like Controller
 const switchLike = require("../controllers/likeController");
 
 // Variable Declaration
@@ -32,6 +33,8 @@ router
   .route("/")
   .post(authenticateUser, validateBlog, createBlog)
   .get(authenticateUser, getAllBlogs);
+
+router.route("/mine").get(authenticateUser, getMyBlogs);
 
 router
   .route("/:id")
