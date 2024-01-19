@@ -30,7 +30,7 @@ const register = async (req, res) => {
   const hostUrl = origin(req);
 
   await verificationEmail({
-    name: user.fullName,
+    name: user.firstName,
     email: user.email,
     verificationToken: user.verificationToken,
     hostUrl,
@@ -158,7 +158,7 @@ const forgotPassword = async (req, res) => {
     // Send Email
     const hostUrl = origin(req);
     await resetPasswordEmail({
-      name: user.fullName,
+      name: user.firstName,
       email: user.email,
       token: passwordToken,
       hostUrl,

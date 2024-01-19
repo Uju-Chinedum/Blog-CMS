@@ -1,7 +1,7 @@
 const origin = (req) => {
-  const forwardedProtocol = req.get("x-forwarded-proto"); // protocol of the url
-  const forwardedHost = req.get("x-forwarded-host"); // host url
-  const origin = `${forwardedProtocol}://${forwardedHost}`;
+  const clientProtocol = req.protocol; // protocol of the url
+  const clientHost = req.get("host"); // host url
+  const origin = `${clientProtocol}://${clientHost}`;
 
   return origin;
 };
