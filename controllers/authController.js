@@ -23,18 +23,19 @@ const register = async (req, res) => {
   // Setting verification token
   const verificationToken = crypto.randomBytes(32).toString("hex");
   req.body.verificationToken = verificationToken;
+  req.body.isVerified = true;
 
   const user = await User.create(req.body);
 
   // Setting email verification
-  const hostUrl = origin(req);
+  // const hostUrl = origin(req);
 
-  await verificationEmail({
-    name: user.firstName,
-    email: user.email,
-    verificationToken: user.verificationToken,
-    hostUrl,
-  });
+  // await verificationEmail({
+    // name: user.firstName,
+    // email: user.email,
+    // verificationToken: user.verificationToken,
+    // hostUrl,
+  // });
 
   res.status(StatusCodes.CREATED).json({
     msg: "Please check your email and confirm it",
